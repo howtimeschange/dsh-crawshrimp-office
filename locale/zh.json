@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "抓虾 Office 工具",
-    "description": "直接生成、读取和检查 Word/PPT 文件，无需抓虾后端。"
+    "description": "生成 Word/PPT、转换 Markdown、读取文本并校验文档结构与内容。"
   }
 }

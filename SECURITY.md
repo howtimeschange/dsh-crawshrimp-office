@@ -2,16 +2,21 @@
 
 ## Exposed input and output surface
 
-The plugin exposes four bounded tools:
+The plugin exposes seven bounded tools:
 
 - `crawshrimp_office_word_create` accepts a title, paragraphs, and simple string tables and writes a new `.docx`.
+- `crawshrimp_office_word_from_markdown` accepts bounded Markdown text and writes a new `.docx`.
 - `crawshrimp_office_slides_create` accepts a title plus heading and bullet strings and writes a new `.pptx`.
 - `crawshrimp_office_word_read` extracts capped plain text from an existing `.docx`.
+- `crawshrimp_office_slides_read` extracts capped plain text from each existing PPTX slide.
 - `crawshrimp_office_inspect` reads bounded ZIP entry metadata from an existing `.docx` or `.pptx`.
+- `crawshrimp_office_validate` checks required OOXML parts and optional expected text/counts.
 
-Create and read arguments reject unknown fields, including `image`, `media`, `path`, and `url`. The plugin does not fetch remote resources, accept image or media bytes, invoke a media decoder, run a macro, or invoke the Mammoth CLI. Existing Office packages may contain media entries, but inspection reports their metadata and counts without decoding them.
+Create and read arguments reject unknown fields, including `image`, `media`, `path`, and `url`. Markdown HTML is stripped as text and reported as a warning; Markdown image/media syntax is kept as alt text and reported as a warning. The plugin does not fetch remote resources, accept image or media bytes, invoke a media decoder, run a macro, execute HTML, or invoke the Mammoth CLI. Existing Office packages may contain media entries, but inspection, slide readback, and validation report text/metadata without decoding them.
 
-Writes require the host's native DSH approval service to return `allowed-once`. The plugin enforces relative workspace paths, rejects traversal and symlink escapes, caps input and output sizes, refuses overwrites, and writes output atomically.
+The XML reader rejects DTD and entity declarations before parsing and treats malformed XML or missing required OOXML parts as document errors. Validation mismatches are returned as `valid: false` with explicit issues; they are distinct from malformed package errors.
+
+Writes use the host's native DSH permission signals. The plugin skips a duplicate approval request only when both `approval.effectivePolicy(session) === 'never'` and `sandboxPolicy.resolve({ session }).mode === 'danger-full-access'`; this is the host's standing Full Access grant. `ask`, restricted modes, missing services, and permission-resolution errors keep the approval path and fail closed when no `allowed-once` decision is available. The plugin enforces relative workspace paths, rejects traversal and symlink escapes, caps input and output sizes, refuses overwrites, and writes output atomically.
 
 ## Current npm audit findings
 

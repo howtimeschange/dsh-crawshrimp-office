@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "Crawshrimp Office",
-    "description": "Create and inspect Word documents and PowerPoint slides directly in Node.js."
+    "description": "Create Word/PowerPoint files, convert Markdown, read text and validate OOXML content."
   }
 }
